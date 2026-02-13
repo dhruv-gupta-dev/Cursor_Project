@@ -2,7 +2,7 @@ import { Suspense, lazy } from 'react';
 import { Route, Routes } from 'react-router-dom';
 import { ThemeProvider } from './context/ThemeContext';
 import { AppLayout } from './layout/AppLayout';
-
+import { Analytics } from '@vercel/analytics/react';
 const DashboardPage = lazy(() => import('./pages/Dashboard'));
 const SocietiesPage = lazy(() => import('./pages/Societies'));
 const EventsPage = lazy(() => import('./pages/Events'));
@@ -21,6 +21,7 @@ function App() {
           </Routes>
         </AppLayout>
       </Suspense>
+      <Analytics />
     </ThemeProvider>
   );
 }
