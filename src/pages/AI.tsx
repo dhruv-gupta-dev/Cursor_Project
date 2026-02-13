@@ -30,11 +30,17 @@ const AI = () => {
   ]);
   const [input, setInput] = useState('');
   const [isTyping, setIsTyping] = useState(false);
+  const scrollRef = useRef<HTMLDivElement>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
   const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    if (scrollRef.current) {
+      scrollRef.current.scrollTo({
+        top: scrollRef.current.scrollHeight,
+        behavior: 'smooth'
+      });
+    }
   };
 
   useEffect(() => {
@@ -117,7 +123,7 @@ const AI = () => {
         <div className="pointer-events-none absolute -inset-16 bg-[radial-gradient(circle_at_top,_rgba(0,245,255,0.12),_transparent_60%),radial-gradient(circle_at_bottom,_rgba(168,85,247,0.12),_transparent_55%)] opacity-60" />
 
         <div className="relative flex flex-1 flex-col overflow-hidden">
-          <div className="flex-1 space-y-3 overflow-y-auto pr-2">
+        <div ref={scrollRef} className="flex-1 space-y-4 overflow-y-auto pr-2 pt-4 pb-4">
             <AnimatePresence initial={false}>
               {messages.map((msg, idx) => (
                 <motion.div

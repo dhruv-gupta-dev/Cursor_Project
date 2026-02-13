@@ -39,7 +39,7 @@ export const Navbar = () => {
             </span>
             <input
               type="text"
-              placeholder="Search societies, events, members… (Press Ctrl+K)"
+              placeholder="Search societies, events,... (Press Ctrl+K)"
               className="w-full rounded-3xl border border-white/10 bg-slate-900/60 py-2 pl-9 pr-3 text-xs text-slate-200 shadow-soft outline-none ring-0 transition placeholder:text-slate-500 focus:border-neonCyan/60 focus:ring-1 focus:ring-neonCyan/60"
               onFocus={() => openPalette()}
               onKeyDown={(e) => {
