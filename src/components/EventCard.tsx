@@ -1,25 +1,28 @@
 import { GlassCard } from './GlassCard';
 import { motion } from 'framer-motion';
-import { CalendarDays, Users } from 'lucide-react';
-
-type EventStatus = 'Upcoming' | 'Live' | 'Completed';
+import { CalendarDays, Users, TicketPlus } from 'lucide-react';
+import type { EventStatus } from '../context/DataContext';
 
 interface EventCardProps {
+  id: string;
   name: string;
   date: string;
   capacity: number;
   registered: number;
   status: EventStatus;
   society: string;
+  onRegister?: (id: string) => void;
 }
 
 export const EventCard = ({
+  id,
   name,
   date,
   capacity,
   registered,
   status,
   society,
+  onRegister,
 }: EventCardProps) => {
   const fill = Math.min(100, Math.round((registered / capacity) * 100));
   const isLive = status === 'Live';
@@ -89,6 +92,19 @@ export const EventCard = ({
               className={`h-full rounded-full bg-gradient-to-r from-neonCyan to-neonPurple ${isLive ? 'shadow-glow' : ''}`}
             />
           </div>
+          {onRegister && status !== 'Completed' && (
+            <button
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation();
+                onRegister(id);
+              }}
+              className="mt-2 inline-flex items-center justify-center rounded-3xl border border-neonCyan/50 bg-slate-900/70 px-3 py-1.5 text-[11px] font-medium text-neonCyan shadow-soft transition hover:border-neonCyan hover:bg-slate-900/90"
+            >
+              <TicketPlus className="mr-1.5 h-3 w-3" />
+              Register
+            </button>
+          )}
         </div>
       </GlassCard>
     </motion.div>

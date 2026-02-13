@@ -1,7 +1,14 @@
-import { Bell, Search, ChevronDown, Sparkles } from 'lucide-react';
+import { useState } from 'react';
+import { Bell, Search, ChevronDown, Sparkles, LogOut, User, Settings } from 'lucide-react';
 import { ThemeToggle } from './ThemeToggle';
+import { AnimatePresence, motion } from 'framer-motion';
+import { toast } from 'sonner';
+import { useCommandPalette } from '../context/CommandPaletteContext';
 
 export const Navbar = () => {
+  const [profileOpen, setProfileOpen] = useState(false);
+  const { openPalette } = useCommandPalette();
+
   return (
     <header className="sticky top-0 z-30 flex items-center justify-between gap-3 border-b border-white/10 bg-slate-950/60 px-4 py-3 backdrop-blur-xl sm:px-6 lg:px-8">
       <div className="flex items-center gap-3">
@@ -32,15 +39,29 @@ export const Navbar = () => {
             </span>
             <input
               type="text"
-              placeholder="Search societies, events, members..."
+              placeholder="Search societies, events, members… (Press Ctrl+K)"
               className="w-full rounded-3xl border border-white/10 bg-slate-900/60 py-2 pl-9 pr-3 text-xs text-slate-200 shadow-soft outline-none ring-0 transition placeholder:text-slate-500 focus:border-neonCyan/60 focus:ring-1 focus:ring-neonCyan/60"
+              onFocus={() => openPalette()}
+              onKeyDown={(e) => {
+                if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
+                  e.preventDefault();
+                  openPalette();
+                }
+              }}
             />
           </div>
         </div>
 
         <ThemeToggle />
 
-        <button className="relative inline-flex h-9 w-9 items-center justify-center rounded-3xl border border-white/10 bg-slate-900/70 text-slate-200 shadow-soft transition hover:border-neonCyan/50 hover:text-neonCyan">
+        <button
+          className="relative inline-flex h-9 w-9 items-center justify-center rounded-3xl border border-white/10 bg-slate-900/70 text-slate-200 shadow-soft transition hover:border-neonCyan/50 hover:text-neonCyan"
+          onClick={() =>
+            toast('You are all caught up! No new notifications.', {
+              description: 'Notifications will appear here as activity happens.',
+            })
+          }
+        >
           <Bell className="h-4 w-4" />
           <span className="absolute -right-0.5 -top-0.5 flex h-3 w-3 items-center justify-center">
             <span className="absolute inline-flex h-full w-full animate-pulse rounded-full bg-neonCyan/40 opacity-75" />
@@ -48,16 +69,69 @@ export const Navbar = () => {
           </span>
         </button>
 
-        <button className="inline-flex items-center gap-2 rounded-3xl border border-white/10 bg-slate-900/70 px-2 py-1.5 text-xs text-slate-200 shadow-soft transition hover:border-neonCyan/50 hover:bg-slate-800/80">
-          <div className="flex h-7 w-7 items-center justify-center rounded-2xl bg-gradient-to-tr from-neonCyan/40 to-neonPurple/40 text-[11px] font-semibold text-slate-900 shadow-glow">
-            AK
-          </div>
-          <div className="hidden flex-col text-left sm:flex">
-            <span className="text-[11px] font-medium">Alex Kumar</span>
-            <span className="text-[10px] text-slate-400">Council Admin</span>
-          </div>
-          <ChevronDown className="hidden h-3 w-3 text-slate-400 sm:block" />
-        </button>
+        <div className="relative">
+          <button
+            className="inline-flex items-center gap-2 rounded-3xl border border-white/10 bg-slate-900/70 px-2 py-1.5 text-xs text-slate-200 shadow-soft transition hover:border-neonCyan/50 hover:bg-slate-800/80"
+            onClick={() => setProfileOpen((prev) => !prev)}
+          >
+            <div className="flex h-7 w-7 items-center justify-center rounded-2xl bg-gradient-to-tr from-neonCyan/40 to-neonPurple/40 text-[11px] font-semibold text-slate-900 shadow-glow">
+              AK
+            </div>
+            <div className="hidden flex-col text-left sm:flex">
+              <span className="text-[11px] font-medium">Alex Kumar</span>
+              <span className="text-[10px] text-slate-400">Council Admin</span>
+            </div>
+            <ChevronDown className="hidden h-3 w-3 text-slate-400 sm:block" />
+          </button>
+
+          <AnimatePresence>
+            {profileOpen && (
+              <motion.div
+                initial={{ opacity: 0, y: 8, scale: 0.98 }}
+                animate={{ opacity: 1, y: 4, scale: 1 }}
+                exit={{ opacity: 0, y: 8, scale: 0.98 }}
+                transition={{ duration: 0.18, ease: [0.22, 1, 0.36, 1] }}
+                className="absolute right-0 z-40 mt-1 w-48 rounded-3xl border border-white/10 bg-slate-950/95 p-2 text-xs text-slate-200 shadow-soft backdrop-blur-xl"
+              >
+                <button
+                  className="flex w-full items-center gap-2 rounded-2xl px-2 py-1.5 text-left hover:bg-white/10"
+                  onClick={() => {
+                    setProfileOpen(false);
+                    toast('Profile opened.', {
+                      description: 'Profile editing will be available in a later iteration.',
+                    });
+                  }}
+                >
+                  <User className="h-3.5 w-3.5" />
+                  <span>View profile</span>
+                </button>
+                <button
+                  className="flex w-full items-center gap-2 rounded-2xl px-2 py-1.5 text-left hover:bg-white/10"
+                  onClick={() => {
+                    setProfileOpen(false);
+                    toast('Account settings.', {
+                      description: 'Settings will be fully wired to backend later.',
+                    });
+                  }}
+                >
+                  <Settings className="h-3.5 w-3.5" />
+                  <span>Account settings</span>
+                </button>
+                <div className="my-1 h-px bg-slate-800/80" />
+                <button
+                  className="flex w-full items-center gap-2 rounded-2xl px-2 py-1.5 text-left text-rose-300 hover:bg-rose-500/10 hover:text-rose-200"
+                  onClick={() => {
+                    setProfileOpen(false);
+                    toast.success('Signed out of the console.');
+                  }}
+                >
+                  <LogOut className="h-3.5 w-3.5" />
+                  <span>Sign out</span>
+                </button>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
       </div>
     </header>
   );

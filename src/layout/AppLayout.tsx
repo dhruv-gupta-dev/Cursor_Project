@@ -3,6 +3,7 @@ import { useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Sidebar } from '../components/Sidebar';
 import { Navbar } from '../components/Navbar';
+import { CommandPalette } from '../components/CommandPalette';
 
 interface AppLayoutProps {
   children: ReactNode;
@@ -31,6 +32,7 @@ export const AppLayout = ({ children }: AppLayoutProps) => {
           </AnimatePresence>
         </main>
       </div>
+      <CommandPalette />
     </div>
   );
 };

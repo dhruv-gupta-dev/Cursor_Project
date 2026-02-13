@@ -1,21 +1,25 @@
 import { motion, useMotionValue, useTransform } from 'framer-motion';
-import { Users2, Star, MapPin } from 'lucide-react';
+import { Users2, Star, MapPin, Plus } from 'lucide-react';
 import { GlassCard } from './GlassCard';
 
 interface SocietyCardProps {
+  id: string;
   name: string;
   category: string;
   members: number;
   rating: number;
   location: string;
+  onJoin?: (id: string) => void;
 }
 
 export const SocietyCard = ({
+  id,
   name,
   category,
   members,
   rating,
   location,
+  onJoin,
 }: SocietyCardProps) => {
   const x = useMotionValue(0);
   const y = useMotionValue(0);
@@ -78,6 +82,19 @@ export const SocietyCard = ({
             <MapPin className="h-3 w-3" />
             <span>{location}</span>
           </div>
+          {onJoin && (
+            <button
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation();
+                onJoin(id);
+              }}
+              className="mt-3 inline-flex items-center justify-center self-start rounded-3xl border border-neonCyan/50 bg-slate-900/70 px-3 py-1.5 text-[11px] font-medium text-neonCyan shadow-soft transition hover:border-neonCyan hover:bg-slate-900/90"
+            >
+              <Plus className="mr-1.5 h-3 w-3" />
+              Join society
+            </button>
+          )}
         </GlassCard>
       </motion.div>
     </motion.div>

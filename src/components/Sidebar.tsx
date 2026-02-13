@@ -53,7 +53,7 @@ export const Sidebar = () => {
                 to={item.to}
                 className={({ isActive }) =>
                   [
-                    'group flex items-center gap-3 rounded-3xl px-3 py-2 text-sm font-medium transition-all duration-200',
+                    'group relative flex items-center gap-3 rounded-3xl px-3 py-2 text-sm font-medium transition-all duration-200',
                     'hover:bg-white/10 hover:text-neonCyan',
                     isActive
                       ? 'bg-white/10 text-neonCyan shadow-soft'
@@ -61,10 +61,33 @@ export const Sidebar = () => {
                   ].join(' ')
                 }
               >
-                <span className="flex h-8 w-8 items-center justify-center rounded-2xl bg-slate-900/60 text-slate-200 group-hover:bg-slate-800/80">
-                  <Icon className="h-4 w-4" />
-                </span>
-                {!collapsed && <span>{item.label}</span>}
+                {({ isActive }) => (
+                  <>
+                    {isActive && (
+                      <motion.div
+                        className="absolute inset-0 rounded-3xl bg-gradient-to-r from-neonCyan/20 to-neonPurple/20"
+                        layoutId="activeNavItem"
+                        transition={{
+                          type: 'spring',
+                          stiffness: 380,
+                          damping: 30,
+                        }}
+                      />
+                    )}
+                    <span
+                      className={`relative z-10 flex h-8 w-8 items-center justify-center rounded-2xl text-slate-200 transition-colors ${
+                        isActive
+                          ? 'bg-gradient-to-br from-neonCyan/40 to-neonPurple/40 text-slate-900 shadow-glow'
+                          : 'bg-slate-900/60 group-hover:bg-slate-800/80'
+                      }`}
+                    >
+                      <Icon className="h-4 w-4" />
+                    </span>
+                    {!collapsed && (
+                      <span className="relative z-10">{item.label}</span>
+                    )}
+                  </>
+                )}
               </NavLink>
             );
           })}
@@ -80,24 +103,34 @@ export const Sidebar = () => {
               to={item.to}
               className={({ isActive }) =>
                 [
-                  'flex flex-col items-center gap-0.5 rounded-2xl px-2 py-1 transition-all',
+                  'relative flex flex-col items-center gap-0.5 rounded-2xl px-2 py-1 transition-all',
                   isActive ? 'text-neonCyan' : 'text-slate-300',
                 ].join(' ')
               }
             >
               {({ isActive }) => (
                 <>
+                  {isActive && (
+                    <motion.div
+                      className="absolute inset-0 rounded-2xl bg-gradient-to-r from-neonCyan/15 to-neonPurple/15"
+                      layoutId="activeNavItemMobile"
+                      transition={{
+                        type: 'spring',
+                        stiffness: 380,
+                        damping: 30,
+                      }}
+                    />
+                  )}
                   <span
-                    className={[
-                      'flex h-8 w-8 items-center justify-center rounded-2xl',
+                    className={`relative z-10 flex h-8 w-8 items-center justify-center rounded-2xl transition-all ${
                       isActive
-                        ? 'bg-gradient-to-tr from-neonCyan/30 to-neonPurple/40 shadow-glow'
-                        : 'bg-slate-800/70',
-                    ].join(' ')}
+                        ? 'bg-gradient-to-tr from-neonCyan/40 to-neonPurple/40 shadow-glow scale-105'
+                        : 'bg-slate-800/70'
+                    }`}
                   >
                     <Icon className="h-4 w-4" />
                   </span>
-                  <span className="text-[11px]">{item.label}</span>
+                  <span className="relative z-10 text-[11px]">{item.label}</span>
                 </>
               )}
             </NavLink>

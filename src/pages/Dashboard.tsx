@@ -13,6 +13,10 @@ import {
   Cell,
 } from 'recharts';
 import { EventCard } from '../components/EventCard';
+import { toast } from 'sonner';
+import { useNavigate } from 'react-router-dom';
+import { useData } from '../context/DataContext';
+import { motion } from 'framer-motion';
 
 const lineData = [
   { name: 'Mon', members: 320 },
@@ -24,53 +28,54 @@ const lineData = [
   { name: 'Sun', members: 640 },
 ];
 
-const pieData = [
-  { name: 'Cultural', value: 16 },
-  { name: 'Technical', value: 10 },
-  { name: 'Sports', value: 8 },
-  { name: 'Social', value: 6 },
-];
-
 const pieColors = ['#00f5ff', '#a855f7', '#22c55e', '#f97316'];
 
-const activity = [
-  {
-    title: 'Robotics Society onboarded 12 new members',
-    time: '5 min ago',
-    type: 'member',
+const statContainerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.1,
+    },
   },
-  {
-    title: 'Cultural Fest 2026 approved by council',
-    time: '1 hr ago',
-    type: 'event',
-  },
-  {
-    title: 'AI Society requested funding for hackathon',
-    time: '3 hrs ago',
-    type: 'funding',
-  },
-];
+};
 
-const upcomingEvents = [
-  {
-    name: 'Winter Cultural Night',
-    date: 'Feb 22, 2026 · 6:00 PM',
-    capacity: 500,
-    registered: 340,
-    status: 'Upcoming' as const,
-    society: 'Cultural Society',
+const statItemVariants = {
+  hidden: { opacity: 0, y: 12 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      duration: 0.35,
+      ease: [0.22, 1, 0.36, 1],
+    },
   },
-  {
-    name: 'Inter-College Robotics Showdown',
-    date: 'Mar 3, 2026 · 10:00 AM',
-    capacity: 200,
-    registered: 160,
-    status: 'Upcoming' as const,
-    society: 'Robotics Society',
-  },
-];
+};
 
 const Dashboard = () => {
+  const navigate = useNavigate();
+  const { stats, events, activity, registerForEvent } = useData();
+
+  const pieData = [
+    {
+      name: 'Cultural',
+      value: 16,
+    },
+    {
+      name: 'Technical',
+      value: 10,
+    },
+    {
+      name: 'Sports',
+      value: 8,
+    },
+    {
+      name: 'Social',
+      value: 6,
+    },
+  ];
+
+  const upcomingEvents = events.filter((e) => e.status === 'Upcoming').slice(0, 2);
   return (
     <div className="space-y-6">
       <div className="flex flex-wrap items-center justify-between gap-3">
@@ -82,42 +87,70 @@ const Dashboard = () => {
             Track society health, events, and engagement in real-time.
           </p>
         </div>
-        <button className="btn-primary text-xs">
+        <button
+          className="btn-primary text-xs"
+          onClick={() => {
+            const p = new Promise<void>((resolve) =>
+              setTimeout(() => resolve(), 1200),
+            );
+            toast.promise(p, {
+              loading: 'Analyzing society health and events…',
+              success: () => {
+                navigate('/ai');
+                return 'AI insights ready on the AI Hub.';
+              },
+              error: 'Unable to fetch AI insights right now.',
+            });
+          }}
+        >
           <Bot className="mr-1.5 h-3.5 w-3.5" />
           Ask AI for insights
         </button>
       </div>
 
-      <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-        <StatCard
-          label="Total Members"
-          value={2940}
-          icon={<Users2 className="h-4 w-4" />}
-          trend="up"
-          trendValue={12}
-        />
-        <StatCard
-          label="Active Societies"
-          value={40}
-          icon={<Trophy className="h-4 w-4" />}
-          trend="up"
-          trendValue={4}
-        />
-        <StatCard
-          label="Events this month"
-          value={18}
-          icon={<CalendarDays className="h-4 w-4" />}
-          trend="up"
-          trendValue={9}
-        />
-        <StatCard
-          label="AI Suggestions"
-          value={32}
-          icon={<Bot className="h-4 w-4" />}
-          trend="up"
-          trendValue={22}
-        />
-      </div>
+      <motion.div
+        className="grid gap-4 md:grid-cols-2 xl:grid-cols-4"
+        variants={statContainerVariants}
+        initial="hidden"
+        animate="visible"
+      >
+        <motion.div variants={statItemVariants}>
+          <StatCard
+            label="Total Members"
+            value={stats.totalMembers}
+            icon={<Users2 className="h-4 w-4" />}
+            trend="up"
+            trendValue={12}
+          />
+        </motion.div>
+        <motion.div variants={statItemVariants}>
+          <StatCard
+            label="Active Societies"
+            value={stats.activeSocieties}
+            icon={<Trophy className="h-4 w-4" />}
+            trend="up"
+            trendValue={4}
+          />
+        </motion.div>
+        <motion.div variants={statItemVariants}>
+          <StatCard
+            label="Events this month"
+            value={stats.eventsThisMonth}
+            icon={<CalendarDays className="h-4 w-4" />}
+            trend="up"
+            trendValue={9}
+          />
+        </motion.div>
+        <motion.div variants={statItemVariants}>
+          <StatCard
+            label="AI Suggestions"
+            value={stats.aiSuggestions}
+            icon={<Bot className="h-4 w-4" />}
+            trend="up"
+            trendValue={22}
+          />
+        </motion.div>
+      </motion.div>
 
       <div className="grid gap-4 xl:grid-cols-3">
         <GlassCard className="col-span-2 p-4 sm:p-5">
@@ -239,11 +272,28 @@ const Dashboard = () => {
               Upcoming events
             </h2>
           </div>
-          <div className="space-y-3">
-            {upcomingEvents.map((event) => (
-              <EventCard key={event.name} {...event} />
+          <motion.div
+            className="space-y-3"
+            variants={statContainerVariants}
+            initial="hidden"
+            animate="visible"
+          >
+            {upcomingEvents.map((event, idx) => (
+              <motion.div key={event.id} variants={statItemVariants}>
+                <EventCard
+                  {...event}
+                  onRegister={async (id) => {
+                    const p = registerForEvent(id);
+                    toast.promise(p, {
+                      loading: 'Saving your spot…',
+                      success: 'Registered for event. Dashboard updated.',
+                      error: 'Unable to register for event right now.',
+                    });
+                  }}
+                />
+              </motion.div>
             ))}
-          </div>
+          </motion.div>
         </GlassCard>
       </div>
     </div>
