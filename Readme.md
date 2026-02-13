@@ -32,8 +32,7 @@ To run this project locally, make sure you have Node.js installed.
 
 1. **Clone the repository:**
 ```bash
-   git clone [https://github.com/dhruv-dev25/college-societies-saas.git](https://github.com/dhruv-dev25/college-societies-saas.git)
-   cd college-societies-saas
+git clone https://github.com/dhruv-gupta-dev/Cursor_Project.git
 ```
 2. **Install dependencies:**
 ```bash
@@ -63,6 +62,6 @@ Following the AI-assisted generation, significant manual engineering was done to
 
 ## 👨‍💻 Author
 
-**Dhruv Gupta * GitHub: @dhruv-gupta-dev**
+Dhruv Gupta *GitHub: @dhruv-gupta-dev*
 
 > If you like this project, feel free to leave a ⭐!
